@@ -1,16 +1,16 @@
 #!/bin/bash
 
-if [ $# -lt 1 ] ; then
-    echo "Please input virtual machine prefix name"
+if [ $# -lt 2 ] ; then
+    echo "Please input virtual machine prefix name and number of vms"
 elif [ $1 = "-h" -o $1 = "--help" ] ; then
-    echo  "Usage: ./create_vm.sh <vm_pre_name>"
+    echo  "Usage: ./create_vm.sh <vm_pre_name> <number_of_vm>"
 else
 
-    for loop in 1 2 3
+    for loop in `seq 1 $2`
     do
       az vm create --resource-group RoyResourceGroup \
           --name $1-$loop \
-          --image "OpenLogic:CentOS:7.4:7.4.20180118" \
+          --image "RHEL" \
           --nsg hdp-nsg \
           --size Standard_E8s_v3 \
           --ssh-key-value @eea-hdp.pub \
