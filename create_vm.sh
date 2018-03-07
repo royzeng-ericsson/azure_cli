@@ -10,6 +10,7 @@ else
     do
       az vm create --resource-group RoyResourceGroup \
           --name $1-$loop \
+          --admin-username redhat \
           --image "RHEL" \
           --nsg hdp-nsg \
           --size Standard_E8s_v3 \
