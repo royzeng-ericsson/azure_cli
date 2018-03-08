@@ -7,6 +7,12 @@ elif [ $1 = "-h" -o $1 = "--help" ] ; then
 else
     for loop in `seq 1 $2`
     do
-      az vm delete --resource-group RoyResourceGroup  --name $1-$loop --yes &
+      az vm delete --resource-group RoyResourceGroup --name $1-$loop --yes
+      # delete disk after vm deleted, it cannot be done by Azure automatically.
+      # Get disk name
+      DiskName = `az disk list -g RoyResourceGroup --query "[].name" -o tsv | grep $1-$loop`
+      # Delete disk
+      az disk delete --resource-group RoyResourceGroup --yes --name ${DiskName}
+
     done
 fi
