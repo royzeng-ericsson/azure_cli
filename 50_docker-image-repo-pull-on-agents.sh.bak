@@ -1,0 +1,35 @@
+#!/bin/bash -x
+
+BASE_DIR=`dirname $0`
+source $BASE_DIR/0_k8s-config.txt
+MASTER_IP=`hostname -i`
+
+DOCKERIMAGES="
+flowmanager:v3
+flowui:v3
+flowpostgres:v3"
+
+#jboss/kie-server-roadmap.7.6.0.final:v0.1
+#jboss/drools-workbench-roadmap-7.6.0:v0.1x
+#jboss/kie-server:7.6.0.Final
+#jboss/drools-workbench:7.6.0.Final"
+
+sudo docker login iotanalyticsregistry.azurecr.io -u iotanalyticsregistry -p Ob2S6ESPZVm7fXPsL=dWW1IN08cPGD1C
+
+echo "now to download docker images from Azure Registry repository..."
+
+for i in $DOCKERIMAGES; do
+sudo docker pull iotanalyticsregistry.azurecr.io/$i
+done
+
+sudo docker images
+
+for agentIP in ${K8SAGENTS[@]}; do
+    echo "now to pull docker images $agentIP ..."
+    ssh -t $VM_ADMIN@$agentIP "sudo docker login iotanalyticsregistry.azurecr.io -u iotanalyticsregistry -p Ob2S6ESPZVm7fXPsL=dWW1IN08cPGD1C"
+    sleep 2
+    for i in $DOCKERIMAGES; do
+        ssh -t $VM_ADMIN@$agentIP "sudo docker pull iotanalyticsregistry.azurecr.io/$i"
+    done
+    ssh -t $VM_ADMIN@$agentIP "sudo docker images"
+done

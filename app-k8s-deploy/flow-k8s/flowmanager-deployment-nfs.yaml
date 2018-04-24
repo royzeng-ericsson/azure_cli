@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flowmanager
+  labels:
+    app: flowmanager
+    tier: flowmanager
+spec:
+  # comment or delete the following line if you want to use a LoadBalancer
+  type: NodePort 
+  # if your cluster supports it, uncomment the following to automatically create
+  # an external load-balanced IP for the frontend service.
+  # type: LoadBalancer
+  ports:
+  - port: 8087
+  selector:
+    app: flowmanager
+    tier: flowmanager
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: flowmanager
+spec:
+  selector:
+    matchLabels:
+      app: flowmanager
+      tier: flowmanager
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flowmanager
+        tier: flowmanager
+    spec:
+      containers:
+        - name: flowmanager
+          image: 10.240.255.5:5000/flowmanager:v3
+          ports:
+            - containerPort: 8087
+          env:
+            - name: FLOW_POSTGRES_SERVICE_HOST
+              value: "flow-postgres"
+            - name: FLOW_POSTGRES_SERVICE_PORT
+              value: "5432"
+          volumeMounts:
+            - name: flowmanager-glusterfs-storage
+              mountPath: /usr/src/runtime
+              readOnly: false
+      volumes:
+        - name: flowmanager-glusterfs-storage
+          nfs:
+            server: 10.240.255.5
+            path: /gluster-volume-flowdata/runtime

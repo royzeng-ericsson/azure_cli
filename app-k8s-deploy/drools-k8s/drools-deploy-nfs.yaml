@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: drools
+  labels:
+    app: drools
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 8080
+    nodePort: 30080
+  - name: management
+    port: 8001
+  selector:
+    app: drools
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: drools
+spec:
+  selector:
+    matchLabels:
+      app: drools
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: drools
+    spec:
+      containers:
+      - name: drools
+        image: 10.240.255.5:5000/jboss/drools-workbench-roadmap-7.6.0:v0.1x
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8001
+          name: management
+          protocol: TCP
+        volumeMounts:
+          - name: drools-persistent-storage
+            mountPath: /opt/jboss/gitdir
+            readOnly: false
+      volumes:
+        - name: drools-persistent-storage
+          nfs:
+            server: 10.240.255.5
+            path: /gluster-volume-droolsdata/gitdir
+

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flow-postgres
+  labels:
+    app: flowmanager
+    tier: postgres
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+      nodePort: 30432
+  selector:
+    app: flowmanager
+    tier: postgres
+  
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: flowmanager
+      tier: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: flowmanager
+        tier: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: 10.240.255.5:5000/flowpostgres:v3
+        ports:
+        - containerPort: 5432
+          name: postgres
+        volumeMounts:
+          - name: postgres-glusterfs-storage
+            mountPath: /var/lib/postgresql/data
+            readOnly: false
+      volumes:
+        - name: postgres-glusterfs-storage
+          nfs:
+            server: 10.240.255.5
+            path: /gluster-volume-postgresdata/data

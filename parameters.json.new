@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "value": "iot"
+        },
+        "masterDnsNamePrefix": {
+            "value": "iotmgmt"
+        },
+        "agentDnsNamePrefix": {
+            "value": "iotagents"
+        },
+        "agentCount": {
+            "value": 2
+        },
+        "agentVMSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "linuxAdminUsername": {
+            "value": "centos"
+        },
+        "orchestratorType": {
+            "value": "Kubernetes"
+        },
+        "masterCount": {
+            "value": 1
+        },
+        "sshRSAPublicKey": {
+            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBf9sfz9kZr6oR/lY1tjvu27n8ZgjdL2pAJ4xLspoJmwcxGCjCj19hEJJSS3DZMbRh9APPsGzF7krsf8jwOL81fnmrPOjGQ8e9mYkQmD0hu2Z/3PN1kzEN9+dZIGoTF4/OiwLJ7vom16foLuk+Itkr/xwSEBiySEPoLMuA/CU1KK/soXB6fK5q3kg5k/u/mgJyRCvY66z7KPxibL5z9EA4+bfss/Pj15bPZeLyzYycBUeIW06qiUhhwqX+vCG13jujCfERDovzMelWJc713NHqIrK6P6IwDeVSH/bZQ659o9j63Gf7TBGiiuKBOJWb8Yu9CQmcLzrHTDiIDv19tuCl"
+        },
+        "servicePrincipalClientId": {
+            "value": "e1223885-9360-4839-8ee5-783dfa3d69b1"
+        },
+        "servicePrincipalClientSecret": {
+            "value": "P4MdJuAtiQi8aaAxmoEzHUK8WGisuvEOfNA8qmtfRys="
+        },
+        "osType": {
+            "value": "Linux"
+        },
+        "ukRegion": {
+            "value": false
+        }
+    }
+}

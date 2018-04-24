@@ -1,0 +1,59 @@
+#!/bin/bash -x
+
+BASE_DIR=`dirname $0`
+
+#source common config
+#source ***.config
+
+#Replace acs template parameter.json
+ACSAGENT_NUMBER=''
+ACS_NUMBER=3
+
+if [ "$ACS_NUMBER" ] && [ $ACS_NUMBER -ge 3 ]; then
+    ACSAGENT_NUMBER=`expr $ACS_NUMBER - 1 `
+    echo "ACS_NUMBER is $ACS_NUMBER"
+else
+   echo "ACS vm numbers should be greater or equal to 3. Please update the config file."
+   exit 1
+fi
+
+resourceGroupLocation="Japan West"
+resourceGroupName="iotroy"
+masterDnsNamePrefix="iotk8s"
+
+VM_ADMIN=centos
+K8SMasterhostname=$masterDnsNamePrefix.$resourceGroupLocation.cloudapp.azure.com
+echo $K8SMasterhostname
+#K8SMasterhostname=$masterDnsNamePrefix.$resourceGroupLocation.cloudapp.azure.com
+#K8SMasterhostname=iotmgmt.westus2.cloudapp.azure.com
+DOCKERRegistry=iotanalyticsregistry.azurecr.io
+
+GLUSTERAGENTS="
+10.240.0.4
+10.240.0.5"
+
+agent1IP=10.240.0.4
+agent2IP=10.240.0.5
+MASTER_IP=10.240.255.5
+
+reserveIP=3
+for i in `seq $ACSAGENT_NUMBER`; do
+    reserveIP=`expr $reserveIP + 1`
+    K8SAGENTS[$i]=10.240.0.$reserveIP
+done
+
+#for i in ${K8SAGENTS[@]}; do
+#    echo $i
+#done
+
+GLUSTERFSROOT=/glusterfs-brick
+POSTDATAPATH=$GLUSTERFSROOT/postgresdata
+POSTGRESVOLUME=gluster-volume-postgresdata
+#FLOWMANAGERPATH=$GLUSTERFSROOT/flowmanagerdata
+#FLOWMANAGERVOLUME=gluster-volume-flowmanagerdata
+DROOLSDATAPATH=$GLUSTERFSROOT/droolsdata
+DROOLSVOLUME=gluster-volume-droolsdata
+
+
+FLOWPATH=$GLUSTERFSROOT/flowdata
+FLOWVOLUME=gluster-volume-flowdata
